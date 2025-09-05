@@ -1,0 +1,199 @@
+# Created by generate-pxe-menu! Do NOT edit unless you know what you are doing!
+# Keep those comment "MENU DEFAULT" and "MENU HIDE"! Do NOT remove them.
+# Note!!! If "serial" directive exists, it must be the first directive
+
+default vesamenu.c32
+timeout 70
+prompt 0
+noescape 1
+MENU MARGIN 5
+MENU BACKGROUND drblwp.png
+# Set the color for unselected menu item and timout message
+MENU COLOR UNSEL 7;32;41 #c0000090 #00000000
+MENU COLOR TIMEOUT_MSG 7;32;41 #c0000090 #00000000
+MENU COLOR TIMEOUT 7;32;41 #c0000090 #00000000
+MENU COLOR HELP 7;32;41 #c0000090 #00000000
+
+# MENU MASTER PASSWD
+
+say **********************************************
+say Welcome to DRBL.
+say NCHC Free Software Labs, Taiwan.
+say http://drbl.org; http://drbl.nchc.org.tw
+say **********************************************
+
+# Allow client to edit boot parameters
+ALLOWOPTIONS 1
+
+# Set PATH to bios/ or efi64/, which is relative to PXE root dir (/tftpboot/nbi_img/pxelinux.cfg).
+# bios is for legacy PXE booting, while efi64 is for uEFI network booting.
+# This might be improved in syslinux 7.0 using auto detection.
+# For more info, please check:
+# http://www.syslinux.org/archives/2014-April/thread.html#21974
+#PATH efi64/
+PATH bios/
+
+# simple menu title
+MENU TITLE DRBL (http://drbl.org)
+
+label drbl
+  MENU DEFAULT
+  # MENU HIDE
+  MENU LABEL Ubuntu 25.04 Linux (DRBL mode, mostly local resources)
+  # MENU PASSWD
+  # If necessary, uncomment "IPAPPEND 1" to get DHCP/BOOTP in kernel command line,
+  # i.e., ip=<client-ip>:<boot-server-ip>:<gw-ip>:<netmask>
+  # IPAPPEND 1
+  kernel vmlinuz-pxe
+  append initrd=initrd-pxe.img devfs=nomount drblthincli=off selinux=0 quiet edd=on  
+  TEXT HELP
+  * DRBL version: 5.4.6-1. (C) 2003-2025, NCHC, Taiwan
+  * Disclaimer: DRBL comes with ABSOLUTELY NO WARRANTY
+  ENDTEXT
+
+label clonezilla
+  # MENU DEFAULT
+  MENU HIDE
+  MENU LABEL Clonezilla
+  # MENU PASSWD
+  # If necessary, uncomment "IPAPPEND 1" to get DHCP/BOOTP in kernel command line,
+  # i.e., ip=<client-ip>:<boot-server-ip>:<gw-ip>:<netmask>
+  # IPAPPEND 1
+  kernel vmlinuz-pxe
+  APPEND initrd=initrd-pxe.img boot=live fetch=tftp://192.168.100.1/nbi_img/clonezilla/filesystem.squashfs ip=dhcp components quiet
+
+
+# append initrd=initrd-pxe.img boot=live root=/dev/ram0 union=overlay noswap noprompt vga=788 fetch=tftp://192.168.100.1/filesystem.squashfs ip=dhcp
+#  IPAPPEND 2
+#  append initrd=initrd-pxe.img boot=live netboot=nfs nfsroot=192.168.100.1:/tftpboot/nbi_img/clonezilla fetch=nfs://192.168.100.1:/tftpboot/nbi_img/clonezilla/filesystem.squashfs ip=dhcp components quiet noswap edd=on nomodeset
+#  append initrd=initrd-pxe.img devfs=nomount drblthincli=off selinux=0 quiet text 1 edd=on boot=live netboot=nfs nfsroot=192.168.100.1:/tftpboot/nbi_img/clonezilla fetch=nfs://192.168.100.1:/tftpboot/nbi_img/clonezilla/filesystem.squashfs
+  #append initrd=initrd-pxe.img devfs=nomount drblthincli=off selinux=0 quiet text 1 edd=on   
+  TEXT HELP
+  * Clonezilla version: 5.8.20-1. (C) 2003-2025, NCHC, Taiwan
+  * Disclaimer: Clonezilla comes with ABSOLUTELY NO WARRANTY
+  ENDTEXT
+
+LABEL clonezilla-live
+  MENU LABEL Clonezilla Live (ISO mode)
+  KERNEL vmlinuz-pxe
+  #KERNEL /clonezilla-live/vmlinuz
+  APPEND initrd=initrd-pxe.img boot=live netboot=nfs nfsroot=192.168.100.1:/tftpboot/nbi_img/clonezilla fetch=nfs://192.168.100.1:/tftpboot/nbi_img/clonezilla/filesystem.squashfs ip=dhcp components quiet noswap edd=on nomodeset
+#  APPEND initrd=/clonezilla-live/initrd.img boot=live fetch=tftp://192.168.100.1/clonezilla-live/filesystem.squashfs
+  TEXT HELP
+  * Clonezilla Live boot via PXE (ISO mode)
+  * Loads full Clonezilla Live environment
+  ENDTEXT
+
+label local
+  # MENU DEFAULT
+  # MENU HIDE
+  MENU LABEL Local operating system (if available)
+  # MENU PASSWD
+  # 2 method to boot local device:
+  # (1) For localboot 0, it is decided by boot order in BIOS, so uncomment the follow 1 line if you want this method:
+  # localboot 0
+
+  # (2) For chain.c32, you can assign the boot device.
+  # Ref: extlinux.doc from syslinux
+  # Syntax: APPEND [hd|fd]<number> [<partition>]
+  # [<partition>] is optional.
+  # Ex:
+  # Second partition (2) on the first hard disk (hd0);
+  # Linux would *typically* call this /dev/hda2 or /dev/sda2, then it's "APPEND hd0 2"
+  #
+  kernel chain.c32
+  append hd0
+  TEXT HELP
+  Boot local OS from first hard disk if it's available
+  ENDTEXT
+
+label memtest (32 bits)
+  # MENU DEFAULT
+  # MENU HIDE
+  MENU LABEL Memory test using Memtest86+ (32 bits)
+  # MENU PASSWD
+  kernel mt86+x32.mbr
+  TEXT HELP
+  Run memory test using 32-bit Memtest86+ Memtest86+ v7.20 Memtest86+ v7.20
+  ENDTEXT
+
+label memtest (64 bits)
+  # MENU DEFAULT
+  # MENU HIDE
+  MENU LABEL Memory test using Memtest86+ (64 bits)
+  # MENU PASSWD
+  kernel mt86+x64.mbr
+  TEXT HELP
+  Run memory test using 64-bit Memtest86+ Memtest86+ v7.20 Memtest86+ v7.20
+  ENDTEXT
+
+label drbl-terminal
+  # MENU DEFAULT
+  MENU HIDE
+  MENU LABEL Ubuntu 25.04 Linux (Terminal mode, mostly remote resources)
+  # MENU PASSWD
+  # If necessary, uncomment "IPAPPEND 1" to get DHCP/BOOTP in kernel command line,
+  # i.e., ip=<client-ip>:<boot-server-ip>:<gw-ip>:<netmask>
+  # IPAPPEND 1
+  kernel vmlinuz-pxe
+  append initrd=initrd-pxe.img devfs=nomount drblthincli=on quiet
+  TEXT HELP
+  Run DRBL in terminal mode.
+  ENDTEXT
+
+# Example for AoE booting
+label AoE-client
+  # MENU DEFAULT
+  MENU HIDE
+  MENU LABEL Diskless client (AoE booting)
+  # MENU PASSWD
+  kernel sanboot.c32
+  append aoe:e0.0
+  TEXT HELP
+  Boot from AoE device
+  ENDTEXT
+
+# Example for Xen client. ///NOTE/// You might have to copy the required file, e.g. xen-3.0.3-1-i386-pae.gz in this case, from /boot to /tftpboot/nbi_img manually.
+# label Xen client
+#   # MENU DEFAULT
+#   MENU HIDE
+#   MENU LABEL Xen client
+#   # MENU PASSWD
+#   kernel mboot.c32
+#   append xen-3.0.3-1-i386-pae.gz --- vmlinuz-2.6.18-6-xen-vserver-686 root=/dev/sda1 ro console=tty0 --- initrd-pxe.2.6.18-6-xen-vserver-686.img
+#   TEXT HELP
+#   DRBL client running on Xen kernel
+#   ENDTEXT
+
+# Example for Clonezilla live PXE booting
+# //NOTE// Remember to change the file names to match your files and check parameters in syslinux/syslinux.cfg from the zip file, copy them to here. It might be different from here, say vmlinuz1 path maybe different.
+#label Clonezilla Live
+#  # MENU DEFAULT
+#  MENU HIDE
+#  MENU LABEL Clonezilla Live
+#  # MENU PASSWD
+#  kernel vmlinuz1
+#  append initrd=initrd1.img boot=live union=aufs noswap noeject nolocales ip=frommedia vga=788 fetch=tftp://$YOUR_SERVER_IP/filesystem.squashfs
+#  TEXT HELP
+#  Boot Clonezilla live via network
+#  ENDTEXT
+
+
+# Example for GParted live PXE booting
+# //NOTE// Remember to change the file names to match your files and check parameters in syslinux/syslinux.cfg from the zip file, copy them to here. It might be different from here, say vmlinuz1 path maybe different.
+#label GParted Live
+#  # MENU DEFAULT
+#  MENU HIDE
+#  MENU LABEL GParted Live
+#  # MENU PASSWD
+#  kernel vmlinuz1
+#  append initrd=initrd1.img boot=live union=aufs noswap noeject ip=frommedia vga=788 fetch=tftp://$YOUR_SERVER_IP/filesystem.squashfs
+#  TEXT HELP
+#  Boot GParted live via network
+#  ENDTEXT
+
+
+
+
+#This file is loacted at /tftpboot/nbi_img/pxelinux.cfg/
+#I have confirmed this ocation by running xdg-open /tftpboot/nbi_img/pxelinux.cfg/
