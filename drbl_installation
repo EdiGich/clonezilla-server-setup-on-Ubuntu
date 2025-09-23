@@ -1,0 +1,276 @@
+1. Preamble
+This document describes the steps to setup the "DRBL" environment in:
+
+    Debian Bullseye (11.x), Debian Buster (10.x).
+    Ubuntu Jammy (22.04) (Snaps packages are not supported in DRBL client), Focal (20.04),
+    CentOS 7.
+    Scientific Linux 7.x, RHEL 7.x, (Use drblsrv-offline)
+    Sorry but it will NOT work in other distributions or versions.
+
+///NOTE/// The DRBL installation on GNU/Linux system is a little complicated to a newbie. If what you want DRBL is to use Clonezilla SE (Server Edition), we suggest you use DRBL live or Clonezilla lite server, which could be put on a CD or USB flash drive so you do not need to install and configure DRBL. You can find DRBL live on download page, and  Clonezilla lite server on Clonezilla website.
+
+Diskless Boot Software
+
+Client Administration Tools
+Discover more
+Data Recovery Service
+DRBL Documentation Access
+server
+DRBL user mailing list subscription
+drbl
+Remote Boot Support
+Cloud computing platforms
+2. Basic hardware requirements
+
+    Check here for more details.
+
+3. Setup the DRBL environment
+
+    I. Prepare the Linux server
+
+    II. Install the required packages on server
+
+Linux Distribution Support
+
+    Upgrade Service
+
+    III. Setup the file system for the clients
+
+    IV. Prepare the clients
+
+    V. DRBL system administration
+
+4. Upgrade
+
+    If newer DRBL packages are available, and you want to upgrade, you can do it by:
+        Backup the important files, such as those files in /etc/drbl and /etc/dhcpd.conf or /etc/dhcp3/dhcpd.conf, etc...
+        Run "drblsrv -u" to uninstall all the DRBL-related packages
+        Follow the step II, download the drbl main program, re-install and configure it again (i.e. "drblsrv -i" and "drblpush -i")
+
+    Sometimes if the versions are close, maybe you can try to upgrade the packages without re-install and re-configure it (i.e. just use apt-get update; apt-get upgrade or yum upgrade). However, this is not recommended, since some of the files will only be deployed to clients after drblsrv and drblpush are run. 
+
+Network Installation Service
+
+    Clonezilla Server Edition
+
+5. Uninstall
+
+    To uninstall DRBL, run: "drblsrv -u", then follow it to uninstall DRBL and related packages. 
+
+6. Bug report
+
+    If you find any bug or any problem, please follow this to report:
+        Excute "drbl-bug-report", then you will get a report (refer to this example). Please follow the the format to fill your description.
+        Mail that to DRBL user mailing list drbl-user _at_ lists sourceforge net (You have to subscribe to that mailing list), or post that in the DRBL forum. 
+
+7. References
+
+Setup DRBL server - II. Install the required packages on server
+///Note///
+
+    This process is done in the server but its purpose is for use by the clients. NOTE! You have to finish the step 1 before doing the step 2 here.
+    From DRBL version 2.x, those related files are not in /opt/drbl/ anymore. All the files are in /usr/sbin/, /usr/bin, /etc/drbl/ or /usr/share/drbl/.
+
+    Before downloading or installing, read the Change log. Also refer to Known issues. Besides, please also refer to "Release Notes".
+    <Step 2a> According different distribution, we have different method to get and 
+
+ install program "drbl"
+
+    Debian or Ubuntu
+        First you have to add the DRBL key (ID: 4096R/45599AFD, Key fingerprint = 54C0 821A 4871 5DAF D61B FCAF 6678 57D0 4559 9AFD) to your apt-key as root privilege. There are two ways to do this. First one: "sudo wget -O /etc/apt/trusted.gpg.d/drbl-gpg.asc https://drbl.org/GPG-KEY-DRBL". Second one: Download the key from key server. The KeyID for DRBL is 45599AFD, you can do it by "gpg --keyserver subkeys.pgp.net --recv-key 45599AFD", then run "gpg -a --export 45599AFD | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/drbl-gpg.asc" to add it to your secure apt.
+        Edit /etc/apt/sources.list per the following:
+        If your distribution is Debian Bullseye (11.x):
+        ----------
+        deb http://ftp.us.debian.org/debian/ bullseye main # (Or any Debian mirror site near you)
+        deb http://free.nchc.org.tw/drbl-core drbl stable
+        ----------
+        If your distribution is Debian Buster (10.x):
+        ----------
+        deb http://ftp.us.debian.org/debian/ buster main # (Or any Debian mirror site near you)
+        deb http://free.nchc.org.tw/drbl-core drbl stable
+        ----------
+        If it's Ubuntu Jammy (22.04) (Snaps packages are not supported in DRBL client):
+        ----------
+        deb http://archive.ubuntu.com/ubuntu jammy main restricted universe multiverse # (Or any Ubuntu mirror site near you)
+        deb http://free.nchc.org.tw/drbl-core drbl stable
+        ----------
+        If it's Ubuntu Focal (20.04):
+        ----------
+        deb http://archive.ubuntu.com/ubuntu focal main restricted universe multiverse # (Or any Ubuntu mirror site near you)
+        deb http://free.nchc.org.tw/drbl-core drbl stable
+        ----------
+        Regarding the 1st line in the above, you can use other apt repository for Debian or Ubuntu. The 2nd line, however, is for DRBL-related programs, there are some mirror sites of DRBL-related programs available here.
+        If you want to use the DRBL's testing branch, the 2nd line is:
+        ----------
+        deb http://free.nchc.org.tw/drbl-core drbl testing
+        ----------
+        If you want to use the unstable branch of DRBL, set the 2nd line as:
+        ----------
+        deb http://free.nchc.org.tw/drbl-core drbl unstable
+        ----------
+        Execute "apt-get update"
+        Execute "apt-get install drbl" to install drbl program.
+
+Diskless Boot Software
+
+    Client Administration Tools
+
+RedHat/CentOS
+
+    Install the DRBL key (ID: 4096R/45599AFD, Key fingerprint = 54C0 821A 4871 5DAF D61B FCAF 6678 57D0 4559 9AFD) to your rpm system. There are two ways to do this. First one: "rm -f GPG-KEY-DRBL; wget http://drbl.org/GPG-KEY-DRBL; rpm --import GPG-KEY-DRBL" or "rm -f GPG-KEY-DRBL; wget http://drbl.nchc.org.tw/GPG-KEY-DRBL; rpm --import GPG-KEY-DRBL". Second one: Download the key from key server. The KeyID for DRBL is 45599AFD, you can do it by "gpg --keyserver subkeys.pgp.net --recv-key 45599AFD", then run "gpg -a --export 45599AFD > GPG-KEY-DRBL; rpm --import GPG-KEY-DRBL" to add it to your rpm system.
+    Download the DRBL RPM file (file name e.g. drbl-4.5.16-drbl1.noarch.rpm)
+    Stable branch: NCHC site
+    Testing branch: NCHC site
+    Unstable branch: NCHC site
+    If you do not login as a system administrator (root), execute the command "su - root", then enter root password to sign in at the root
+    Execute "yum install drbl-XXX.noarch.rpm" to install package DRBL, the "drbl-XXX.noarch.rpm" is the program name you just downloaded.
+
+Network Installation Service
+
+            Diskless Boot Software
+        PS. There are two DRBL-core mirror sites: (1) http://ftp.twaren.net/local-distfiles/drbl-core/ (2) http://drbl.sourceforge.net/drbl-core
+
+    <Step 2b>
+        Scenario 1: If your network bandwidth to Internet is good, and your GNU/Linux distribution provides apt, urpmi or yum repository: Execute "drblsrv -i".  Note: There is a space before the "-i". This is the example execution. If you are uncertain, just press Enter to accept the default value.
+        Scenario 2: If you can not access Internet, the network bandwidth is narrow, you do not want drblsrv to install the required packages for you, or your GNU/Linux distribution does NOT provides apt, urpmi or yum repository (such as RHEL): You can install the required packages by yourself (such as by apt-get, up2date, yum, yast or urpmi), then use "drblsrv-offline" to finish this step <2b>. (drblsrv-offline is available from drbl version 1.7.6-22). Those required packages can be listed by "drblsrv-offline -r". After you install those required packages, if you are sure the kernel in the server meets the client's CPU arch, you can run "drblsrv-offline -s `uname -r`", or you can download appropriate kernel rpm/deb file, which meets the client's CPU arch. Then run "drblsrv-offline -k $KERNEL_PKG" (Replace $KERNEL_PKG with the downloaded kernel rpm or deb file name with path). If you are uncertain, just press Enter to accept the default value when you run drblsrv-offline. (PS 1. More options for drblsrv-offline can be shown by "drblsrv-offline --help". PS 2. To install DRBL in Scientific Linux 5.0, you can refer to this FAQ)
+
+Network Installation Service
+
+        Client Administration Tools
+
+    For the impatient:If you are impatient, your network bandwidth to Internet is good, and your GNU/Linux distribution provides apt, urpmi or yum repository, you can run "drbl4imp" to finish step "2b" and "3a". "drbl4imp" uses the default values to setup the DRBL server. THIS IS VERY IMPORTANT! The default value might not fit your environment! It uses the "range" option in dhcp server so your DRBL client will not always get the same IP address. It also assumes each of the server's network card (except eth0) provides DRBL services to 12 clients. If you want the setup to fit your environment, please run steps "2b" and "3a" step-by-step.
+
+
+
+
+
+
+Setup DRBL server - III. Set up the file system for the client in the Server
+
+    Arrange your environment and make sure you know it.
+    Taking NCHC's 
+
+ computer class room C as an example: There are 40
+ computers. In order to get DRBL to work more efficiently, we separated them to 4 subnets: 192.168.100.0, 192.168.101.0, 192.168.102.0 and 192.168.103.0. There are four Ethernet cards in DRBL server. One is for WAN and the others are for LAN. The IPs of DRBL environment (LAN) are 192.168.100.254, 192.168.101.254, 192.168.102.254 and 192.168.3.254. The services DHCP, TFTP, NFS, etc will run on eth0:1, eth1, eth2, and eth3.
+
+         NIC    NIC IP                    Clients
++-----------------------------+
+|         DRBL SERVER         |
+|                             |
+|+-- [eth0] public IP         +- to WAN
+|     (ex. 61.216.116.23)     |
+|                             |
+|+-- [eth0:1] 192.168.100.254 +- to clients group 1 [ 10 clients, their IP
+|                             |            from 192.168.100.1 - 192.168.100.10]
+|+-- [eth1] 192.168.101.254   +- to clients group 1 [ 10 clients, their IP
+|                             |            from 192.168.101.1 - 192.168.101.10]
+|+-- [eth2] 192.168.102.254   +- to clients group 2 [ 10 clients, their IP
+|                             |            from 192.168.102.1 - 192.168.102.10]
+|+-- [eth3] 192.168.103.254   +- to clients group 3 [ 10 clients, their IP
+|                             |            from 192.168.103.1 - 192.168.103.10]
++-----------------------------+
+
+There are four modes available from DRBL version 1.6.3 or later: Full DRBL, Full
+ Clonezilla, DRBL SSI (Single System Image) and Clonezilla Box. The network bandwidth and disk space requirement are higher in the former two modes, but all the system setting will be saved to server's disk, and every client can have its own individual setting. On the other hand, the DRBL SSI uses single system image for all clients, and the necessary individual settings of clients are created run-time when they boot. This will reduce the required disk space in the server since only one image is necessary. However, the disadvantage is every client can NOT have its own individual system setting (Users' setting will be saved to server). In DRBL SSI mode, once there are extra client nodes want to join DRBL environment, all you have to do is modify the dhcpd config file (dhcpd.conf), then use "dcs -> others -> gen_3N_conf" to create or run "drbl-3n-conf generate", the necessary files will be created. In this mode, theoretically one network card in the server can provide 253 clients. The fourth mode, Clonezilla box mode, is based on DRBL SSI mode, especially for clone system. If you want to use DRBL SSI mode, make sure your client has large memory (say > 512 MB), and all the hardware (especially the graphic card) in the clients are the same. Check this comparison table for these four modes.
+
+Notes for network switch and NICs when using multiple NICs:
+
+When you use multiple NICs to expand the bandwidth, we recommend you set the MAC addresses so that every node will get the same IP address all the time. (i.e. in the following step 3a, when you run "drblpush -i", it prompts "Do you want to fix the IP address of client connected to eth1 by giving MAC address ? [y/N]", choose "Y"). If you do NOT set MAC address (we will call it "range" from now), and you have only one 48-port network switch (or many switches but connected to be one), and you use four NICs (or more than two...) in DRBL server to expand the network bandwidth, a problem will occur (i.e. some clients will not lease IP from DHCP server) so it will not be able to boot.
+On the other hand, if your DRBL server uses four NICs to expand the network bandwidth (meaning that four NICs with four private subnets such as 192.168.100.x, 192.168,101,x, 192.168.102.x, 192.168.103.x), and you have exactly four switches that are separated and not connected to each other, then you can use range (i.e. you do not have to set the MAC address of clients).
+Remember, if you use N NICs to expand network bandwidth in the DRBL server, if using the "range" method, then you must have N switches and they can NOT be connected to each other.
+Diskless Boot Software
+
+Client Administration Tools
+Before executing step <3a>, you can do some customized config:
+
+    If you have some specific directories in this DRBL server to share, such as /work1, then you can use text editor to open file /etc/drbl/drbl.conf, edit the diskless_root_dir_ro_user_add="/work1"(If you want /work1 can only be read by clients, not writable), or diskless_root_dir_rw_user_add="/work1"(If you want /work1 to be readable and writable by clients. (Warning!!! drbl.conf is VERY IMPORTANT, be careful when you edit it!!!)
+    If all the clients have their local 
+
+     harddisk, and the partition is formated (For example, /dev/hda1, its filesystem is ext3), then if you want the client to mount /dev/hda1 as /localwork when booting. Therefore you can edit /etc/drbl/client-append-fstab, and its syntax is just like /etc/fstab. In this example, you can make /etc/drbl/client-append-fstab like this:
+    /dev/hda1 /localwork ext3 defaults 0 0
+    (PS: You do not have to create the directory /tftpboot/node_root/localwork in DRBL server manually, later drblpush will do that for you)
+    If you have extra services (such as apmd and bluetooth) to be on when client boots, you can edit /etc/drbl/client-extra-service, let service_extra_added="apmd bluetooth".
+    If you want to overwrite some or all automatically created hostnames later by "drblpush -i", you can edit "/etc/drbl/client-ip-hostname" now. Check that file for the format. If some machines are not assigned, drblpush will use those automatically created hostname. 
+
+
+<Step 3a> run "drblpush -i". The
+ software will auto-detect the system to figure out the argument. If the argument is not set up in the system, the system will request you to do that. Example: see here.
+
+Note!!! If newer packages are installed in the server after this step, you have to run "drblpush -i" or "drblpush -c /etc/drbl/drblpush.conf" (This will loaded the previously saved settings) again so that newer packages will be deployed to clients.
+Note!!! It is not recommended to turn on the system update automatically. Since If newer packages are installed in the server automatically, without running "drblpush -i", the programs for client might not be compatible with that newer in server. If you want to turn on system update automatically, remember to follow the above step to update the files in client automatically.
+Hard Drive Cloning
+
+    Diskless Boot Software
+
+Continue the next step - IV. Setting up clients to use the DRBL environmen
+
+IV. Prepare the clients
+
+        There are four different scenarios where you can make clients boot from network: 1) the client has PXE network interface card, 2) the client has a floppy drive, 3) the client has a CDROM, 4) the client has a local 
+
+         hard drive. We use iPXE as an example for cases 2-4. 
+
+        Case 1: The client has a PXE network interface card
+            Set the client's BIOS to boot from "LAN" or "network".
+            Take one of the Asus motherboards for example, in this manual file.
+                Page 4-24, you will see OnBoard LAN, there is a subfuncton "OnBoard LAN BOOT ROM", normally it's disabled, you have to enable it.
+                Usually you have to reboot it now, make the function re-read by BIOS.
+                After rebooting, enter BIOS setting again, this time, in Page 4-35, you have to make LAN boot as the 1st boot device.
+            That's it. Let client boot and enjoy DRBL!!!
+
+        Case 2: The client has a floppy drive.
+                Use the "universal" image /usr/share/ipxe/ipxe.dsk in the DRBL server. It supports most modern network cards. (Ref: here.
+
+Client Administration Tools
+
+                Hard Drive Cloning
+            <Step 4b> Insert the floppy to floppy drive in DRBL server
+                Run "cat /usr/share/ipxe/ipxe.dsk > /dev/fd0" in the DRBL server.
+                If you want to create the image floppy in MS windows, download rawrite.exe or "RawWrite for windows" (http://uranus.it.swin.edu.au/~jn/linux/) to write the ROM image to floppy.
+            <Step 4c> Put this floppy to client's floppy drive, make sure the floppy is the first boot device in the client's BIOS. If everything was done correctly, after a few minutes, the clients will be waiting for you to login, All the accounts are same as the ones in server.
+
+        Case 3: Client has a CDROM (Reference):
+            1) The "universal" image is located in /usr/share/ipxe/ipxe.iso
+            2) Burn the ISO to a CD:
+            cdrecord -v speed=12 fs=16m dev=0,0,0 -data ipxe.iso
+            (If necessary, modify "dev=0,0,0", run "cdrecord -scanbus" to get your CD burner.)
+            3) Ensure the PC is set to boot from CDROM, place the burned CD in the drive, and reboot. Done! 
+
+        Case 4: client has a local hard drive
+            If the client has a local hard drive which is installed with the bootloader grub in GNU/Linux:
+            1. Copy the file "/usr/share/ipxe/ipxe.lkrn" to client's directory "/boot/" in its 
+
+ harddisk
+2. Append one block in the client's /boot/grub/menu.lst or /boot/grub/grub.conf (depends on your distribution) like this:
+---------------
+title Etherboot-PXE
+kernel /boot/ipxe.lkrn
+---------------
+3. Change the default boot to the corresponding one above, like "default 1", in menu.lst or grub.conf in client.
+If the client is running MS Windows XP/2K on its
+ hard disk:
+You can install WINGRUB. Put the file ipxe.lkrn in C:\, and the files: C:\boot.ini and C:\GRUB\MENU.LST look like: (This method is only suitable for installing wingrub in BOOT.INI (Tool -> Install grub -> Boot from BOOT.INI). If necessary, you can use other modes provides by WinGRUB):
+boot.ini:
+---------------
+[boot loader]
+timeout=30
+default=C:\GRLDR
+[operating systems]
+multi(0)disk(0)rdisk(0)partition(1)\WINDOWS="Microsoft Windows XP Professional" /fastdetect
+C:\GRLDR="Etherboot"
+---------------
+MENU.LST:
+---------------
+timeout 7
+
+title iPXE
+root (hd0,0)
+kernel /ipxe.lkrn
+
+title Windows at (hd0,0)
+root (hd0,0)
+chainloader +1
+---------------
+
+
+
