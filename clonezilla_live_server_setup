@@ -1,0 +1,23 @@
+# Clonezilla Live Server Setup Notes
+
+## Network Configuration
+
+The server requires one network interface with a static IP to serve clients and one interface for internet access.
+
+### Set Static IP for Private Network
+
+The `enp3s0` interface is used for the private DRBL network where clients will boot. It was configured with a static IP address because the standard Ubuntu network configuration files were not present.
+
+The following command was used to create a persistent network profile using `nmcli`:
+
+```bash
+sudo nmcli connection add con-name drbl-private ifname enp3s0 type ethernet ipv4.addresses 192.168.100.1/24 ipv4.method manual
+```
+
+ceh_user@cehclonezilla:~$ nmcli device status
+DEVICE  TYPE      STATE      CONNECTION 
+enp3s0  ethernet  unmanaged  --         
+enp6s0  ethernet  unmanaged  --         
+lo      loopback  unmanaged  --         
+ceh_user@cehclonezilla:~$ 
+
